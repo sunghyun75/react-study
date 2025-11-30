@@ -1,29 +1,27 @@
 import { create } from 'zustand';
-import { combine } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
+import { combine } from 'zustand/middleware';
 import type { Todo } from '@/types';
 
-const InitialState: {
-  todos: Todo[];
-} = {
+const InitialState: { todos: Todo[] } = {
   todos: [],
 };
 
-const useTodosStore = create(
+const useTodoStore = create(
   immer(
     combine(InitialState, (set) => ({
       actions: {
         createTodo: (content: string) => {
           set((state) => {
             state.todos.push({
-              id: new Date().getTime(),
+              id: String(new Date().getTime()),
               content: content,
             });
           });
         },
-        deleteTodo: (targetId: number) => {
+        deleteTodo: (id: string) => {
           set((state) => {
-            state.todos = state.todos.filter((todo) => todo.id !== targetId);
+            state.todos = state.todos.filter((todos) => todos.id !== id);
           });
         },
       },
@@ -32,16 +30,16 @@ const useTodosStore = create(
 );
 
 export const useTodo = () => {
-  const todos = useTodosStore((store) => store.todos);
-  return todos;
+  const todo = useTodoStore((store) => store.todos);
+  return todo;
 };
 
-export const useCreate = () => {
-  const createTodo = useTodosStore((store) => store.actions.createTodo);
+export const useCreateTodo = () => {
+  const createTodo = useTodoStore((store) => store.actions.createTodo);
   return createTodo;
 };
 
-export const useDelete = () => {
-  const deleteTodo = useTodosStore((store) => store.actions.deleteTodo);
+export const useDeleteTodo = () => {
+  const deleteTodo = useTodoStore((store) => store.actions.deleteTodo);
   return deleteTodo;
 };

@@ -1,26 +1,27 @@
 import { useState } from 'react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { useCreate } from '@/store/todos';
+import { useCreateTodoMutation } from '@/hooks/mutations/use-create-todo-mutation';
 
 export default function TodoEditor() {
-  const createTodo = useCreate();
+  const { mutate, isPending } = useCreateTodoMutation();
+  const [contents, setContents] = useState('');
 
-  const [content, setContent] = useState('');
-
-  const handlerClickAdd = () => {
-    if (content.trim() === '') return;
-    createTodo(content);
-    setContent('');
+  const handleClickAdd = () => {
+    if (contents.trim() === '') return;
+    mutate(contents);
+    setContents('');
   };
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 p-5">
       <Input
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
+        value={contents}
+        onChange={(e) => setContents(e.target.value)}
         placeholder="일정을 추가하세요..."
       />
-      <Button onClick={handlerClickAdd}>추가</Button>
+      <Button disabled={isPending} onClick={handleClickAdd}>
+        추가
+      </Button>
     </div>
   );
 }
